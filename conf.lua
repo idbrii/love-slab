@@ -24,6 +24,15 @@ SOFTWARE.
 
 --]]
 
+
+-- My preferred use case (see also main.lua):
+-- main in project root, all code in src, libraries in src/lib/
+--~ love.filesystem.setRequirePath("src/?.lua;src/?/init.lua;src/lib/?.lua;src/lib/?/init.lua")
+
+-- Still fails on this simpler setup.
+love.filesystem.setRequirePath("src/?.lua;src/?/init.lua")
+
+
 function love.conf(t)
 	t.window.title = "Slab"
 	t.window.width = 1280

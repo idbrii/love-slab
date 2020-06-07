@@ -24,8 +24,12 @@ SOFTWARE.
 
 --]]
 
-local Slab = require 'Slab'
-local SlabTest = require 'SlabTest'
+-- My preferred use case -- see conf.lua
+--~ local Slab = require 'Slab'
+--~ local SlabTest = require 'Slab.SlabTest'
+
+local Slab = require 'lib/Slab'
+local SlabTest = require 'lib/Slab.SlabTest'
 
 function love.load(args)
 	love.graphics.setBackgroundColor(0.4, 0.88, 1.0)
