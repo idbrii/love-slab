@@ -171,6 +171,42 @@ function Utility.TableCount(Table)
 	return Result
 end
 
+
+local function KeysToList(Table, KeyComparison)
+	local list = {}
+	local index = 1
+	for key in pairs(Table) do
+		list[index] = key
+		index = index + 1
+	end
+	table.sort(list, KeyComparison)
+	return list
+end
+
+-- Like pairs() but iterates in sorted order.
+-- Creates a new table and closure every time it is called.
+--	Table: [Table] The table to iterate.
+--	KeyComparison: [function] An optional function to compare the keys.
+--
+--	Return: iterator
+--
+--	See http://lua-users.org/wiki/SortedIteration
+function Utility.SortedPairs(Table, KeyComparison)
+	local list = KeysToList(Table, KeyComparison)
+
+	local i = 0
+	return function()
+		i = i + 1
+		local key = list[i]
+		if key ~= nil then
+			return key, Table[key]
+		else
+			return nil, nil
+		end
+	end
+end
+
+
 function Utility.IsWindows()
 	return love.system.getOS() == "Windows"
 end

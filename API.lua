@@ -1478,7 +1478,7 @@ end
 --]]
 local function Properties(Table, Options, Fallback, Prefix, Visited)
 	if Table ~= nil then
-		for K, V in pairs(Table) do
+		for K, V in Utility.SortedPairs(Table) do
 			local Id = Prefix .. K
 			local Type = type(V)
 			local ItemOptions = Options[K] or Fallback
