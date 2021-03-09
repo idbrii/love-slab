@@ -1464,10 +1464,9 @@ end
 --[[
 	Properties
 
-	Iterates through the table's key-value pairs and adds them to the active window. This currently only does
-	a shallow loop and will not iterate through nested tables.
-
-	TODO: Iterate through nested tables.
+	Iterates through the table's key-value pairs and adds them to the active
+	window. Nested tables only display the key that already displays the same
+	contents.
 
 	Table: [Table] The list of properties to build widgets for.
 	Options: [Table] List of options that can applied to a specific property. The key should match an entry in the
@@ -1477,40 +1476,52 @@ end
 
 	Return: None.
 --]]
-function Slab.Properties(Table, Options, Fallback)
-	Options = Options or {}
-	Fallback = Fallback or {}
-
+local function Properties(Table, Options, Fallback, Prefix, Visited)
 	if Table ~= nil then
 		for K, V in pairs(Table) do
+			local Id = Prefix .. K
 			local Type = type(V)
 			local ItemOptions = Options[K] or Fallback
 			if Type == "boolean" then
-				if Slab.CheckBox(V, K, ItemOptions) then
+				if Slab.CheckBox(V, Id, ItemOptions) then
 					Table[K] = not Table[K]
 				end
 			elseif Type == "number" then
-				Slab.Text(K .. ": ")
+				Slab.Text(Id .. ": ")
 				Slab.SameLine()
 				ItemOptions.Text = V
 				ItemOptions.NumbersOnly = true
 				ItemOptions.ReturnOnText = false
 				ItemOptions.UseSlider = ItemOptions.MinNumber and ItemOptions.MaxNumber
-				if Slab.Input(K, ItemOptions) then
+				if Slab.Input(Id, ItemOptions) then
 					Table[K] = Slab.GetInputNumber()
 				end
 			elseif Type == "string" then
-				Slab.Text(K .. ": ")
+				Slab.Text(Id .. ": ")
 				Slab.SameLine()
 				ItemOptions.Text = V
 				ItemOptions.NumbersOnly = false
 				ItemOptions.ReturnOnText = false
-				if Slab.Input(K, ItemOptions) then
+				if Slab.Input(Id, ItemOptions) then
 					Table[K] = Slab.GetInputText()
+				end
+			elseif Type == "table" then
+				-- only allocate our table when we actually have nested tables.
+				Visited = Visited or {}
+				if Visited[V] then
+					Slab.Text(Id .. ": see ".. Visited[V])
+				else
+					Visited[V] = K
+					Properties(V, Options, Fallback, K .. ".", Visited)
 				end
 			end
 		end
 	end
+end
+function Slab.Properties(Table, Options, Fallback)
+	Options = Options or {}
+	Fallback = Fallback or {}
+	return Properties(Table, Options, Fallback, "", nil)
 end
 
 --[[
