@@ -661,6 +661,70 @@ local function DrawInput()
 	end
 end
 
+local properties_values = {
+	x = 10,
+	y = 100,
+	a = 1,
+	b = 0.5,
+	c = 0,
+	text = "Hello",
+	toggle = true,
+	color = {
+		r = 1,
+		g = 0.74,
+		b = 0.5,
+		a = 0.44,
+	},
+}
+local properties_use_options = false
+local properties_fallback = {
+	MinNumber = 0,
+	MaxNumber = 1,
+	Step = 0.1,
+}
+local properties_options = {
+	x = {
+		MinNumber = -100,
+		MaxNumber = 100,
+	},
+	y = {
+		MinNumber = -100,
+		MaxNumber = 100,
+	},
+	text = {
+		BgColor = { 0, 0, 0.5, 1 },
+	},
+}
+local function DrawProperties()
+	Slab.Textf("You can use Properties to automatically build a table of widgets.")
+
+	if properties_use_options then
+		Slab.Properties(properties_values, properties_options, properties_fallback)
+	else
+		Slab.Properties(properties_values)
+	end
+
+	local Options = {
+		Color = {
+			properties_values.color.r,
+			properties_values.color.g,
+			properties_values.color.b,
+			properties_values.color.a,
+		}
+	}
+
+	Slab.NewLine()
+	Slab.Textf("Properties modifies the values inside the table:")
+	Slab.Textf(string.format(" Position: (%f,%f)\n Text: %s\n Toggle: %s", properties_values.x, properties_values.y, properties_values.text, (properties_values.toggle and "true" or "false")), Options)
+	Slab.Textf(string.format(" a,b,c: (%f,%f,%f)", properties_values.a, properties_values.b, properties_values.c))
+
+	Slab.NewLine()
+	Slab.Textf("Properties can also have a table of options to customize each property.")
+	if Slab.CheckBox(properties_use_options, "Use Options") then
+		properties_use_options = not properties_use_options
+	end
+end
+
 local DrawImage_Path = SLAB_FILE_PATH .. "/Internal/Resources/Textures/power.png"
 local DrawImage_Path_Icons = SLAB_FILE_PATH .. "/Internal/Resources/Textures/gameicons.png"
 local DrawImage_Color = {1, 0, 0, 1}
@@ -2332,6 +2396,7 @@ local Categories = {
 	{"Menus", DrawMenus},
 	{"Combo Box", DrawComboBox},
 	{"Input", DrawInput},
+	{"Properties", DrawProperties},
 	{"Image", DrawImage},
 	{"Cursor", DrawCursor},
 	{"List Box", DrawListBox},
